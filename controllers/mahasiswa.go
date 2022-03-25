@@ -12,21 +12,13 @@ import (
 )
 
 type MahasiswaInput struct {
-	ID            int    `json:"id" binding:"required,uuid" gorm:"primary_key"`
-	Nama          string `json:"nama" binding:"required"`
+	ID            int    `json:"id" binding:"required" gorm:"primary_key"`
+	Nama          string `json:"nama" binding:"required,min=5"`
 	Email         string `json:"email" binding:"required,email"`
 	Prodi         string `json:"prodi" binding:"required"`
 	Fakultas      string `json:"fakultas" binding:"required"`
-	NIM           int    `json:"nim" binding:"required"`
+	NIM           int    `json:"nim" binding:"required,gte=6"`
 	TahunAngkatan int    `json:"tahunangkatan" binding:"required"`
-}
-
-type CustomValidator struct {
-	validator *validator.Validate
-}
-
-func (cv *CustomValidator) Validate(i interface{}) error {
-	return cv.validator.Struct(i)
 }
 
 //GET DATA
@@ -57,8 +49,14 @@ func CreateDataMhs(c *gin.Context) {
 			case "email":
 				report := fmt.Sprintf("%s is not valid email", e.Field())
 				errorMessages = append(errorMessages, report)
-			case "minsize":
+			case "min":
 				report := fmt.Sprintf("%s must be more than 5 characters", e.Field())
+				errorMessages = append(errorMessages, report)
+			case "number":
+				report := fmt.Sprintf("%s must be numbers", e.Field())
+				errorMessages = append(errorMessages, report)
+			case "gte":
+				report := fmt.Sprintf("%s must be more than 5", e.Field())
 				errorMessages = append(errorMessages, report)
 			}
 		}
@@ -111,8 +109,14 @@ func UpdateDataMhs(c *gin.Context) {
 			case "email":
 				report := fmt.Sprintf("%s is not valid email", e.Field())
 				errorMessages = append(errorMessages, report)
-			case "minsize":
+			case "min":
 				report := fmt.Sprintf("%s must be more than 5 characters", e.Field())
+				errorMessages = append(errorMessages, report)
+			case "number":
+				report := fmt.Sprintf("%s must be numbers", e.Field())
+				errorMessages = append(errorMessages, report)
+			case "gte":
+				report := fmt.Sprintf("%s must be more than 5", e.Field())
 				errorMessages = append(errorMessages, report)
 			}
 		}

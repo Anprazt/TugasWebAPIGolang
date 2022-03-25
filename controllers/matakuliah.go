@@ -1,20 +1,22 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/Anprazt/TugasWebAPIGolang/models"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/jinzhu/gorm"
 )
 
 type MatkulInput struct {
-	ID             int    `json:"id"`
-	KodeMataKuliah string `json:"kodematakuliah"`
-	NamaMataKuliah string `json:"namamatakuliah"`
-	JumlahSks      int    `json:"jumlahsks"`
-	DosenPengampu  string `json:"dosenpengampu"`
+	ID             int    `json:"id" binding:"required"`
+	KodeMataKuliah string `json:"kodematakuliah" binding:"required"`
+	NamaMataKuliah string `json:"namamatakuliah" binding:"required,min=3"`
+	JumlahSks      int    `json:"jumlahsks" binding:"required"`
+	DosenPengampu  string `json:"dosenpengampu" binding:"required"`
 }
 
 //GET DATA
@@ -34,9 +36,21 @@ func CreateDataMatkul(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	//validasi
 	var dataInput MatkulInput
-	if err := c.ShouldBindJSON(&dataInput); err != nil {
+	err := c.ShouldBindJSON(&dataInput)
+	if err != nil {
+		errorMessages := []string{}
+		for _, e := range err.(validator.ValidationErrors) {
+			switch e.Tag() {
+			case "required":
+				report := fmt.Sprintf("%s is required", e.Field())
+				errorMessages = append(errorMessages, report)
+			case "min":
+				report := fmt.Sprintf("%s must be more than 5 characters", e.Field())
+				errorMessages = append(errorMessages, report)
+			}
+		}
 		c.JSON(http.StatusBadRequest, gin.H{
-			"Error": err.Error(),
+			"errors": errorMessages,
 		})
 		return
 	}
@@ -71,9 +85,21 @@ func UpdateDataMatkul(c *gin.Context) {
 	}
 	//validasi
 	var dataInput MatkulInput
-	if err := c.ShouldBindJSON(&dataInput); err != nil {
+	err := c.ShouldBindJSON(&dataInput)
+	if err != nil {
+		errorMessages := []string{}
+		for _, e := range err.(validator.ValidationErrors) {
+			switch e.Tag() {
+			case "required":
+				report := fmt.Sprintf("%s is required", e.Field())
+				errorMessages = append(errorMessages, report)
+			case "min":
+				report := fmt.Sprintf("%s must be more than 5 characters", e.Field())
+				errorMessages = append(errorMessages, report)
+			}
+		}
 		c.JSON(http.StatusBadRequest, gin.H{
-			"Error": err.Error(),
+			"errors": errorMessages,
 		})
 		return
 	}

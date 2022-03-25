@@ -11,36 +11,39 @@ import (
 func main() {
 	r := gin.Default()
 
+	//versioning API
+	v1 := r.Group("/v1")
+
 	//Models
 	db := models.SetUpModels()
-	r.Use(func(c *gin.Context) {
+	v1.Use(func(c *gin.Context) {
 		c.Set("db", db)
 		c.Next()
 	})
-	r.GET("/", func(c *gin.Context) {
+	v1.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"Message": "Tugas Web API golang",
 		})
 	})
 	//MAHASISWA
 	//Get all data
-	r.GET("/mahasiswa", controllers.ReadDataMhs)
+	v1.GET("/mahasiswa", controllers.ReadDataMhs)
 	//Post data
-	r.POST("/mahasiswa", controllers.CreateDataMhs)
+	v1.POST("/mahasiswa", controllers.CreateDataMhs)
 	//Update data
-	r.PUT("/mahasiswa/:nim", controllers.UpdateDataMhs)
+	v1.PUT("/mahasiswa/:nim", controllers.UpdateDataMhs)
 	//Delete data
-	r.DELETE("/mahasiswa/:nim", controllers.DeleteDataMhs)
+	v1.DELETE("/mahasiswa/:nim", controllers.DeleteDataMhs)
 
 	//MATAKULIAH
 	//Get all data
-	r.GET("/matakuliah", controllers.ReadDataMatkul)
+	v1.GET("/matakuliah", controllers.ReadDataMatkul)
 	//Post data
-	r.POST("/matakuliah", controllers.CreateDataMatkul)
+	v1.POST("/matakuliah", controllers.CreateDataMatkul)
 	//Update data
-	r.PUT("/matakuliah/:kode", controllers.UpdateDataMatkul)
+	v1.PUT("/matakuliah/:kode", controllers.UpdateDataMatkul)
 	//Delete data
-	r.DELETE("/matakuliah/:kode", controllers.DeleteDataMatkul)
+	v1.DELETE("/matakuliah/:kode", controllers.DeleteDataMatkul)
 
 	r.Run()
 }
