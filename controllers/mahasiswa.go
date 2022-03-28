@@ -153,6 +153,7 @@ func DeleteDataMhs(c *gin.Context) {
 
 	//menampilkan hasil
 	c.JSON(http.StatusOK, gin.H{
-		"Data": true,
+		"Data":    true,
+		"Message": "Data berhasil dihapus",
 	})
 }
